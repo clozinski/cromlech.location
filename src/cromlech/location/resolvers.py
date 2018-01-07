@@ -15,6 +15,10 @@ _safe = '@+'  # Characters that we don't want to have quoted
 
 @implementer(IURL)
 def resolve_url(context, request):
+    #If this is the publication root, return the application url. 
+    if IPublicationRoot.providedBy(context):
+            return request.application_url
+    
     # first try to get the __parent__ of the object, no matter whether
     # it provides ILocation or not. If this fails, look up an ILocation
     # adapter. This will always work, as a general ILocation adapter
@@ -30,8 +34,6 @@ def resolve_url(context, request):
         container = context.__parent__
 
     if container is None:
-        if IPublicationRoot.providedBy(context):
-            return request.application_url
         raise LookupError(
             'The path of the application root could not be resolved.')
 
